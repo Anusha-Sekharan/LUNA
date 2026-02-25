@@ -1,0 +1,60 @@
+.scene-selector {
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 15px;
+}
+
+.scene-header h4 {
+    margin: 0 0 10px 0;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.scene-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+.scene-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    color: white;
+}
+
+.scene-card:hover {
+    background: rgba(255, 0, 204, 0.2);
+    transform: translateX(5px);
+    box-shadow: 0 0 15px rgba(255, 0, 204, 0.3);
+}
+
+.scene-icon {
+    font-size: 1.5rem;
+}
+
+.scene-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.scene-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.scene-desc {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+}

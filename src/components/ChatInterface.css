@@ -1,0 +1,149 @@
+.chat-interface {
+    width: 350px;
+    height: 500px;
+    background: var(--vibe-bg, rgba(20, 20, 40, 0.85));
+    /* Glassmorphism base */
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    border: 1px solid var(--vibe-border, rgba(255, 255, 255, 0.2));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 30px var(--vibe-glow, rgba(0, 0, 0, 0.5));
+    animation: popIn 0.3s ease-out;
+    transition: background 1s ease, border 1s ease, box-shadow 1s ease;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.chat-header {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    cursor: move;
+    /* Indicate draggable */
+    user-select: none;
+    /* Prevent text selection */
+}
+
+.header-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #00ff88;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #00ff88;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.messages-area {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    max-width: 80%;
+    display: flex;
+}
+
+.message.luna {
+    align-self: flex-start;
+}
+
+.message.user {
+    align-self: flex-end;
+}
+
+.bubble {
+    padding: 10px 15px;
+    border-radius: 15px;
+    color: white;
+}
+
+.luna .bubble {
+    background: linear-gradient(135deg, #ff00cc, #333399);
+    border-bottom-left-radius: 2px;
+}
+
+.user .bubble {
+    background: rgba(255, 255, 255, 0.2);
+    border-bottom-right-radius: 2px;
+}
+
+.input-area {
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    gap: 10px;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 20px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    outline: none;
+}
+
+.input-area button {
+    background: #ff00cc;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.input-area button:hover {
+    transform: scale(1.1);
+}
+
+/* Active Monitoring Pulse */
+.active-pulse {
+    animation: monitoring-glow 2s infinite alternate;
+}
+
+@keyframes monitoring-glow {
+    from {
+        text-shadow: 0 0 5px #00ffcc;
+        transform: scale(1);
+    }
+
+    to {
+        text-shadow: 0 0 15px #00ffcc, 0 0 25px #00ffcc;
+        transform: scale(1.1);
+    }
+}

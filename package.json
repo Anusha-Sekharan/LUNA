@@ -1,0 +1,43 @@
+{
+  "name": "ai-girl",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "concurrently \"npm run vite:dev\" \"npm run electron:dev\"",
+    "vite:dev": "vite",
+    "electron:dev": "cross-env NODE_ENV=development electron .",
+    "build": "vite build",
+    "dist": "vite build && electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "face-api.js": "^0.22.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "systeminformation": "^5.31.1"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^3.7.2",
+    "@vitejs/plugin-react": "^5.1.4",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^40.4.1",
+    "electron-builder": "^24.13.3",
+    "vite": "^7.3.1",
+    "wait-on": "^9.0.4"
+  },
+  "build": {
+    "appId": "com.luna.ai-bestie",
+    "productName": "Luna AI Bestie",
+    "win": {
+      "target": "nsis"
+    },
+    "directories": {
+      "output": "dist-electron"
+    }
+  }
+}
