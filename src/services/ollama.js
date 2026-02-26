@@ -3,7 +3,7 @@
  */
 
 const OLLAMA_ENDPOINT = 'http://localhost:11434/api/chat';
-const MODEL = 'llama3.1:8b';
+const MODEL = 'llama3.2:3b';
 
 export const generateResponse = async (messages) => {
     try {
