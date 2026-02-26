@@ -112,14 +112,24 @@ function App() {
         updateBond(0.5);
 
         // --- ASSISTANT ACTION PARSER ---
-        const actionMatch = response.match(/\[ACTION:(\w+)\|(.+)\]/);
+        // Robust regex to handle non-greedy matches, multiple actions, and missing closing brackets
+        const actionMatch = response.match(/\[ACTION:([A-Z_]+)\|(.*?)(?:\](?!\w)|$)/i);
 
         if (actionMatch) {
-            const [fullMatch, actionName, actionArgsStr] = actionMatch;
-            const cleanResponse = response.replace(fullMatch, '').trim();
+            let [fullMatch, actionName, actionArgsStr] = actionMatch;
+            let cleanResponse = response.replace(fullMatch, '').replace(/\]$/, '').trim();
+
+            // Handle Llama3.2 Typos for WhatsApp
+            if (actionName.includes('WHATS') || actionName.includes('WHATSPAP')) {
+                actionName = 'WHATSAPP_SEND';
+            }
+
+            // Cleanup trailing braces from bad LLM JSON generation
+            if (actionArgsStr.endsWith('}}')) actionArgsStr = actionArgsStr.slice(0, -1);
+            if (!actionArgsStr.endsWith('}')) actionArgsStr += '}';
 
             // Show message immediately
-            setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'luna', text: cleanResponse }]);
+            setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'luna', text: cleanResponse || 'Working on it... ⚙️' }]);
 
             try {
                 const args = JSON.parse(actionArgsStr);
@@ -142,6 +152,9 @@ function App() {
                         break;
                     case 'WHATSAPP_SEND':
                         ipcRenderer.send('system:whatsapp-send', args);
+                        break;
+                    case 'SEND_EMAIL':
+                        ipcRenderer.send('system:send-email', args);
                         break;
                     case 'CAPTURE_SCREEN':
                         handleSeeScreen();

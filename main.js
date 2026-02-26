@@ -1,3 +1,7 @@
+// Debugging
+console.log("Process Type:", process.type);
+console.log("Electron Keys:", Object.keys(require('electron')));
+
 const { app, BrowserWindow, ipcMain, screen, protocol } = require('electron');
 const path = require('path');
 const fs = require('fs');
@@ -277,30 +281,23 @@ ipcMain.on('system:browse', (event, { url }) => {
     event.reply('system:action-result', { success: true, message: `Opened browser at ${url}` });
 });
 
-ipcMain.on('system:whatsapp-send', (event, { phone, message }) => {
-    const { shell, exec } = require('electron');
-    const { exec: childExec } = require('child_process');
+ipcMain.on('system:whatsapp-send', (event, { contactName, message }) => {
+    const { shell } = require('electron');
+    const { spawn } = require('child_process');
+    const path = require('path');
 
-    let url;
-    const cleanPhone = phone ? String(phone).replace(/\D/g, '') : '';
+    // 1. Open/Focus WhatsApp Desktop App
+    // We use the whatsapp:// custom protocol to launch the local desktop app.
+    // Ensure we don't open the browser.
+    shell.openExternal('whatsapp://send');
 
-    if (cleanPhone) {
-        url = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
-    } else {
-        url = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-    }
-
-    shell.openExternal(url);
-
-    // Smart Send: Use Python + PyAutoGUI to press Enter
-    // This is more robust than PowerShell for complex UI
+    // 2. Smart Send: Use Python + PyAutoGUI to search contact and press Enter
     setTimeout(() => {
         const pythonPath = 'python'; // Assumptions: python is in PATH
         const scriptPath = path.join(__dirname, 'python', 'bridge.py');
 
-        const { spawn } = require('child_process');
-        // We pass the message as well just in case we want to use clipboard later
-        const pythonProcess = spawn(pythonPath, [scriptPath, 'whatsapp_send', message]);
+        // Pass both contactName and message to the python bridge
+        const pythonProcess = spawn(pythonPath, [scriptPath, 'whatsapp_send', contactName || '', message || '']);
 
         pythonProcess.stdout.on('data', (data) => console.log(`[Python Bridge]: ${data}`));
         pythonProcess.stderr.on('data', (data) => console.error(`[Python Error]: ${data}`));
@@ -308,11 +305,44 @@ ipcMain.on('system:whatsapp-send', (event, { phone, message }) => {
         pythonProcess.on('close', (code) => {
             console.log(`Python process exited with code ${code}`);
         });
-    }, 7000);
+    }, 5000); // 5 seconds to let WhatsApp Web load/focus
 
     event.reply('system:action-result', {
         success: true,
-        message: `I've prepared your message! Quick—click on the WhatsApp tab I just opened! I'll press "Send" for you in 7 seconds! 📲💨`
+        message: `I'm opening WhatsApp now! Please don't touch the mouse/keyboard for a few seconds while I type! ⌨️✨`
+    });
+});
+
+ipcMain.on('system:send-email', (event, { to, subject, body }) => {
+    const { shell } = require('electron');
+    const { spawn } = require('child_process');
+    const path = require('path');
+
+    // 1. Generate Gmail Compose URL with specifically anushasekharan@gmail.com account
+    // view=cm = Compose Message, fs=1 = Fullscreen, tf=1 = Tear off
+    const gmailUrl = `https://mail.google.com/mail/u/anushasekharan@gmail.com/?view=cm&fs=1&tf=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject || 'Update')}&body=${encodeURIComponent(body || '')}`;
+
+    // 2. Open it in the default browser
+    shell.openExternal(gmailUrl);
+
+    // 3. Smart Send: Use Python + PyAutoGUI to press Ctrl+Enter (Send)
+    setTimeout(() => {
+        const pythonPath = 'python';
+        const scriptPath = path.join(__dirname, 'python', 'bridge.py');
+
+        const pythonProcess = spawn(pythonPath, [scriptPath, 'gmail_send']);
+
+        pythonProcess.stdout.on('data', (data) => console.log(`[Python Bridge]: ${data}`));
+        pythonProcess.stderr.on('data', (data) => console.error(`[Python Error]: ${data}`));
+
+        pythonProcess.on('close', (code) => {
+            console.log(`Python email process exited with code ${code}`);
+        });
+    }, 6000); // 6 seconds to let Gmail load completely
+
+    event.reply('system:action-result', {
+        success: true,
+        message: `I'm opening your Gmail draft now! Please don't touch the keyboard for a few seconds while I click Send! 📧✨`
     });
 });
 

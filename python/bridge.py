@@ -25,13 +25,48 @@ def type_text(text):
     except Exception as e:
         print(json.dumps({"success": False, "error": str(e)}))
 
-def whatsapp_send(message):
+def whatsapp_send(contact_name, message):
     try:
-        time.sleep(5)
-        for i in range(3):
-            pyautogui.press('enter')
-            time.sleep(0.5)
-        print(json.dumps({"success": True, "message": "Automation sequence complete!"}))
+        # 1. Wait for WhatsApp to completely load/focus (5 seconds delay in main.js + 2 here)
+        time.sleep(2)
+        
+        # 2. Focus the Search Bar (Ctrl+F is the shortcut for WhatsApp Desktop on Windows)
+        pyautogui.hotkey('ctrl', 'f')
+        time.sleep(1)
+        
+        # 3. Type the contact name
+        pyautogui.write(contact_name, interval=0.05)
+        time.sleep(2) # Wait for search results
+        
+        # 4. Press Enter to select the top contact
+        pyautogui.press('enter')
+        time.sleep(1)
+        
+        # 5. Type the message
+        pyautogui.write(message, interval=0.02)
+        time.sleep(0.5)
+        
+        # 6. Press Enter to Send
+        pyautogui.press('enter')
+        
+        print(json.dumps({"success": True, "message": f"Message sent to {contact_name} successfully!"}))
+    except Exception as e:
+        print(json.dumps({"success": False, "error": str(e)}))
+
+def gmail_send():
+    """
+    Automates sending the pre-filled Gmail draft.
+    Assumes the browser is already focused and the Gmail compose window 
+    is loaded (handled by main.js shell.openExternal and a delay).
+    """
+    try:
+        # Give it a tiny bit of extra time to ensure focus
+        time.sleep(1)
+        
+        # In Gmail, Ctrl+Enter is the shortcut to send a message
+        pyautogui.hotkey('ctrl', 'enter')
+        
+        print(json.dumps({"success": True, "message": "Email sent successfully!"}))
     except Exception as e:
         print(json.dumps({"success": False, "error": str(e)}))
 
@@ -117,7 +152,12 @@ if __name__ == "__main__":
         action = sys.argv[1]
         
         if action == "whatsapp_send":
-            whatsapp_send("")
+            if len(sys.argv) > 3:
+                whatsapp_send(sys.argv[2], sys.argv[3])
+            else:
+                print(json.dumps({"success": False, "error": "Contact name or message missing"}))
+        elif action == "gmail_send":
+            gmail_send()
         elif action == "open_app":
             if len(sys.argv) > 2:
                 open_app(sys.argv[2])
