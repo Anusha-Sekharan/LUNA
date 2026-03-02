@@ -1,4 +1,4 @@
-# Luna AI Bestie
+# Luna
 
 Luna AI Bestie is a personalized AI assistant desktop application designed to be a virtual companion that integrates seamlessly with your operating system. Built with Electron, React, Vite, and Python, Luna monitors your system health, automates local workflows, and helps manage tasks dynamically via an interactive companion interface.
 
