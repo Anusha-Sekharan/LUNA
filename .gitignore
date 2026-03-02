@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+*.log
+python/venv/
+python/.venv/
+.DS_Store
+Thumbs.db
